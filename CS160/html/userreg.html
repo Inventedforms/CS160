@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>User Registration</title>
+  </head>
+  <body></body>
+  <p>New user?</p>
+  <form id="register" method="post" name="register" action="/cgi-bin/regscript.cgi">
+    <p>Username:<br>
+      <input id="newusername" type="text" name="username">
+    </p>
+    <p>Password:<br>
+      <input id="newpassword" type="password" name="p1">
+    </p>
+    <p>Password (again): <br>
+      <input id="newpassword2" type="password" name="p2">
+    </p>
+    <p>First name (optional):<br>
+      <input id="firstname" type="text" name="fname">
+    </p>
+    <p>Last name (optional):<br>
+      <input id="lastname" type="text" name="lname">
+    </p>
+    <p>
+      <input id="register" type="submit" name="Sign up" value="Sign up">
+    </p>
+  </form>
+  <p>Already a user?<br>
+    <button onclick="login()">Login</button>
+  </p>
+</html>
+<script>
+  function login() {
+    window.location.href = '/userlogin.html'
+  }
+</script>

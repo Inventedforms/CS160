@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Welcome</title>
+  </head>
+  <body>
+    <p>Login</p>
+    <form id='login' method='post' action='/cgi-bin/userlogin.cgi'>
+    <input type='submit' name='Login' value='Login'>
+    </form>
+    <p>Register</p>
+    <button onclick="register()">Register</button>
+  </body>
+</html>
+<script>
+  function login() {
+    window.location.href = '/userlogin.html'
+  }
+  function register() {
+    window.location.href ='/userreg.html'
+  }
+</script>
