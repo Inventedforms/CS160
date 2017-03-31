@@ -1,48 +1,54 @@
 #!/usr/bin/python
 
 # Import modules for CGI handling 
-import cgi, cgitb, os
+import cgi, cgitb, os, psycopg2, bcrypt
 from furl import furl
 from uuid import getnode as get_mac
-#from hashlib import blake2
 
 # Create instance of FieldStorage 
 form = cgi.FieldStorage() 
 # For debugging
 cgitb.enable()
-#conn = psycopg2.connect()
-#cur = conn.cursor()
-#h = blake2b(digest_size=16)
-#Get data from fields
-#url = furl(os.environ["REQUEST_URI"])
-#print url.add({"user": "2"}).url
-#check(username, password)
 mac = get_mac()
-if  mac == 140737678160619:
-	print "Location:userpage.cgi\r\n"
-else:
+if "username" not in form or "password" not in form:
 	print "Content-Type: text/html\r\n\r\n"    # HTML is following   
 	print                        # blank line, end of headers
 	print "<html>"
-	print "<head>"
-	print "<title>Welcome</title>"
-	print "</head>"
-	print "<p>"
-	print "SOMETHING"
-	if "username" not in form or "password" not in form:
-		print "Problem detected"
-	else:	
-		username = form.getvalue('username')
-		password = form.getvalue('password')
-		print "Hello " + form.getvalue('username')
-		print "Your password is: " + form.getvalue('password')
-
-	print "</p>"
+	print "Incomplete information entered."
 	print "</html>"
+else:	
+	username = form.getvalue('username')
+	password = form.getvalue('password')
+	print "Content-Type: text/html\r\n\r\n"    # HTML is following   
+	print                        # blank line, end of headers
+	print "<html>"
+	try:
+		conn = psycopg2.connect("dbname='cs160' user='alan' host='localhost' password='student'")
+		c = conn.cursor()
+		query = "SELECT * FROM user_profile WHERE username=(%s)"
+		c.execute(query, [str(username)])
+		user = c.fetchone()
+		if user is None:
+			print "No such user"
+		else:
+			hashed = user[1]
+			if(bcrypt.checkpw(password, hashed)):
+				#store a session for the user, redirect them to user page
+				print "Location:userpage.cgi\r\n"
+			else:
+				print "Authentication failure"
+		conn.commit()
+		c.close()
+		conn.close()
+	except:
+		print "cannot connect"
+	print "</html>"
+	#	print "cannot connect"
+	#try:
+		#conn = psycopg2.connect("dbname='alan' user='alan' host='localhost' password='student'")
+		#if(bcrypt.checkpw(password, hashed)):
+	#		print "Location:userpage.cgi\r\n"
+	#	else:
+	#except:
+#return urlunsplit((scheme, netloc, path, new_query_string, fragment))
 
-    #return urlunsplit((scheme, netloc, path, new_query_string, fragment))
-#def hash(password, sal){
-#	h = blake2b(digest_size=16, salt=sal)
-#	h.update(password)
-#	return h.hexdigest()
-#}
