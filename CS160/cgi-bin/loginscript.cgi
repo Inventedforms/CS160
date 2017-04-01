@@ -23,7 +23,7 @@ else:
 	print                        # blank line, end of headers
 	print "<html>"
 	try:
-		conn = psycopg2.connect("dbname='cs160' user='alan' host='localhost' password='student'")
+		conn = psycopg2.connect("dbname='cs160' user='cs160' host='localhost' password='student'")
 		c = conn.cursor()
 		query = "SELECT * FROM user_profile WHERE username=(%s)"
 		c.execute(query, [str(username)])

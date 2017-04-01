@@ -10,19 +10,15 @@ form = cgi.FieldStorage()
 cgitb.enable()
 crappy_passwords = {'password', '12345', '123456' ,'qwerty' ,'12345678'}
 #Get data from fields
+message = ""
 
-print "Content-Type: text/html\r\n\r\n"    # HTML is following   
-print                        # blank line, end of headers
-print "<html>"
-print "<head>"
-print "<title>Welcome</title>"
-print "</head>"
-print "<p>"
 if "username" not in form or "p1" not in form or "p2" not in form:
-	print "Please pick a username and password."
+	message = "Please pick a username and password."
 else:	
 	try:
-		conn = psycopg2.connect("dbname='alan' user='alan' host='localhost' password='student'")
+		conn = psycopg2.connect("""
+			dbname='cs160' user='cs160' host='localhost' password='student'
+			""")
 		cur = conn.cursor()
 		username = form.getvalue('username')
 		pw = form.getvalue('p1')
@@ -55,5 +51,13 @@ else:
 		conn.close()
 	except:
 		print "error"
+print "Content-Type: text/html\r\n\r\n"    # HTML is following   
+print                        # blank line, end of headers
+print "<html>"
+print "<head>"
+print "<title>Welcome</title>"
+print "</head>"
+print "<p>"
+print message
 print "</p>"
 print "</html>"
