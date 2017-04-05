@@ -10,17 +10,17 @@ CREATE TABLE valid_extensions (
 	PRIMARY KEY (Extension)
 );
 CREATE TABLE user_login (
-	User_id				bigserial,
+	Session_id				bigserial,
    	 Username        	varchar(100) references user_profile(Username), 
    	 Login_date			timestamp,
 	Login_ip 			cidr,
 	MAC_Address			varchar(100)
-	PRIMARY KEY (User_id, Username)
+	PRIMARY KEY (Session_id, Username)
 );
 
 CREATE TABLE video_metadata (
 	Video_id			bigserial,
-    	Framerate           real CHECK(Framerate > 0),
+    Framerate           real CHECK(Framerate > 0),
 	frame_num_total		int CHECK(frame_num_total > 0),
 	resolution			point,
 	video_name			varchar(100) NOT NULL,

@@ -4,18 +4,18 @@ from uuid import getnode as get_mac
 #import psycopg2
 mac = get_mac()
 msg = ""
-#try:
-#	conn = psycopg2.connect("dbname='cs160' user='cs160' host='localhost' password='student'")
-#	c = conn.cursor()
-#except:
-#	msg = "error"
+try:
+	conn = psycopg2.connect("dbname='cs160' user='cs160' host='localhost' password='student'")
+	c = conn.cursor()
+	
+except Exception, e:
+	msg = str(e)
 print "Content-Type: text/html\r\n\r\n"    # HTML is following   
 print                        # blank line, end of headers
 print "<html>"
 print "<head>"
 print "<title>User page!</title>"
 print "</head>"
-videos = ["video1","video2","video3","video4"]
 print "<p>"
 print '<form enctype="multipart/form-data" id="video" name="video" method="post" action="/cgi-bin/submission.cgi">'
 print "<label for='file'>Filename:</label>"

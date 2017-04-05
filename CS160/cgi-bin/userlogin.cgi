@@ -10,7 +10,7 @@ from uuid import getnode as get_mac
 
 
 mac = get_mac()
-if mac == 140737678160619:
+if mac == 5:
   #here, we need to query the db to see if the user already has a stored session
   #140737678160619:
   print "Location:userpage.cgi\r\n"

@@ -10,5 +10,5 @@ try:
 	info = [str(mac), str(os.environ["REMOTE_ADDR"])]
 	c.execute(str, info)
 	if c.fetchone() is not None:
-		c.execute("DROP * FROM user_login WHERE MAC_Address=(%s) AND Login_ip=9(%s)", info)
-except:
+		c.execute("DROP * FROM user_login WHERE MAC_Address=(%s) AND Login_ip=9(%s)",info)
+except Exception, e:
