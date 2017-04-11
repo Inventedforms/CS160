@@ -26,11 +26,9 @@
     </p>
   </form>
   <p>Already a user?<br>
-    <button onclick="login()">Login</button>
+  <form id="register" method="post" name="register" action="/cgi-bin/redirect.cgi">
+    <input id="login" type="submit" name="Login" value="Login">
+  </form>
   </p>
 </html>
-<script>
-  function login() {
-    window.location.href = '/userlogin.html'
-  }
 </script>

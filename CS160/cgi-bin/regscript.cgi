@@ -7,7 +7,7 @@ from uuid import getnode as get_mac
 form = cgi.FieldStorage() 
 # For debugging
 cgitb.enable()
-crappy_passwords = {'password', '12345', '123456' ,'qwerty' ,'12345678', 'letmein'}
+crappy_passwords = {'password', '12345', '123456' ,'qwerty' ,'12345678', 'letmein', '54321'}
 #Get data from fields
 message = ""
 
@@ -23,8 +23,10 @@ def printerror(msg):
 	print "</p>"
 	print "</html>"	
 
-if "username" not in form or "p1" not in form or "p2" not in form:
+if "username" not in form or "p1" not in form:
 	printerror("Please pick a username and password.")
+elif ("p1" in form) != ("p2" in form):
+	printerror("Make sure you enter your password twice!")
 else:	
 	try:
 		conn = psycopg2.connect("""
@@ -59,8 +61,15 @@ else:
 			#Create a table for this user's videossub
 			ip = os.environ["REMOTE_ADDR"]
 			mac = get_mac()
+			#wipe current session. I should make this into a callable method.
+			string = "SELECT * FROM user_login WHERE MAC_Address=(%s) AND Login_ip=(%s)"
+			info = [str(mac), ip]
+			cur.execute(string, info)
+			if cur.fetchone() is not None:
+				cur.execute("DELETE FROM user_login WHERE MAC_Address=(%s) AND Login_ip=(%s)",info)
+			
 			session = "INSERT INTO user_login (Username, Login_date, Login_ip, MAC_address) VALUES (%s, now(), %s, %s)"
-			c.execute(session, [username, str(ip), str(mac)])
+			cur.execute(session, [username, ip, str(mac)])
 			#print str(type(datetime.datetime.now()))
 			print "Location:userpage.cgi\r\n"
 		conn.commit()
