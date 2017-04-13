@@ -1,10 +1,10 @@
 #!/usr/bin/python
 from uuid import getnode as get_mac
-import psycopg2
+import psycopg2, globals
 mac = get_mac()
 user = ""
 try:
-	conn = psycopg2.connect("dbname='cs160' user='postgres' host='localhost' password = 'student'") 
+	conn = psycopg2.connect(globals.credentials) 
 	cur = conn.cursor()
 	mac = get_mac()
 	cur.execute("SELECT Username FROM user_login WHERE MAC_Address = (%s)", [str(mac)])
@@ -20,9 +20,10 @@ try:
 		print "</head>"
 		print "<p>"
 		print "Hi " + user[0]
+		print "Upload videos here. THe system will only accept valid video formats (mp3, mp4, avi, mov, etc)."
 		print '<form enctype="multipart/form-data" id="video" name="video" method="post" action="/cgi-bin/submission.cgi">'
 		print "<label for='file'>Filename:</label>"
-		print "<input type='file' name='file' id='file'/>"
+		print "<input type='file' name='file' id = 'file'/>"
 		print "<br />"
 		print "<input type='submit' name='submit' value='Submit' />"
 		print "</form>"

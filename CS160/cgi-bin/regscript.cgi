@@ -2,6 +2,7 @@
 
 # Import modules for CGI handling 
 import cgi, cgitb, psycopg2, bcrypt, os
+import globals
 from uuid import getnode as get_mac
 # Create instance of FieldStorage 
 form = cgi.FieldStorage() 
@@ -11,27 +12,13 @@ crappy_passwords = {'password', '12345', '123456' ,'qwerty' ,'12345678', 'letmei
 #Get data from fields
 message = ""
 
-def printerror(msg):
-	print "Content-Type: text/html\r\n\r\n"    # HTML is following   
-	print                        # blank line, end of headers
-	print "<html>"
-	print "<head>"
-	print "<title>Welcome</title>"
-	print "</head>"
-	print "<p>"
-	print msg
-	print "</p>"
-	print "</html>"	
-
 if "username" not in form or "p1" not in form:
 	printerror("Please pick a username and password.")
 elif ("p1" in form) != ("p2" in form):
 	printerror("Make sure you enter your password twice!")
 else:	
 	try:
-		conn = psycopg2.connect("""
-			dbname='cs160' user='postgres' host='localhost' password = 'student'
-			""")
+		conn = psycopg2.connect(credentials)
 		cur = conn.cursor()
 		username = form.getvalue('username')
 		pw = form.getvalue('p1')
@@ -76,4 +63,4 @@ else:
 		cur.close()
 		conn.close()
 	except Exception, e:
-		printerror(str(e))
+		globals.printerror(str(e))

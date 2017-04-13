@@ -1,23 +1,22 @@
 #!/usr/bin/python
-
+#globals.py
 # Import modules for CGI handling
 import cgi, cgitb, os, psycopg2, bcrypt, datetime, ipaddress
+import globals
 from uuid import getnode as get_mac
 
 # Create instance of FieldStorage
 form = cgi.FieldStorage()
 # For debugging
 cgitb.enable()
-msg = "yay"
+msg = ""
 if "username" not in form or "password" not in form:
 	msg = "Incomplete information entered."
 else:
 	username = form.getvalue('username')
 	password = form.getvalue('password')
 	try:
-		conn = psycopg2.connect("""
-			dbname='cs160' user='postgres' host='localhost' password = 'student'
-			""")
+		conn = psycopg2.connect(globals.credentials)
 		c = conn.cursor()
 		query = "SELECT * FROM user_profile WHERE username=(%s)"
 		c.execute(query, [username])
@@ -46,9 +45,5 @@ else:
 		c.close()
 		conn.close()
 	except Exception, e:
-		msg  = str(e)
-print "Content-Type: text/html\r\n\r\n"    # HTML is following
-print                        # blank line, end of headers
-print "<html>"
-print msg
-print "</html>"
+		globals.printerror(str(e))
+globals.printerror(msg)
