@@ -2,7 +2,15 @@
 from uuid import getnode as get_mac
 import psycopg2, globals
 mac = get_mac()
-user = ""
+
+def show_video():
+	print """
+		 <video width='320' height='576' preload controls> 
+		 	<source src='../temp/alan/test.mp4' type='video/mp4'>
+		 	Your browser does not support the video tag. 
+		 </video>
+		 """
+
 try:
 	conn = psycopg2.connect(globals.credentials) 
 	cur = conn.cursor()
@@ -13,27 +21,35 @@ try:
 		print "Location:userlogin.cgi\r\n"
 	else:
 		print "Content-Type: text/html\r\n\r\n"    # HTML is following   
-		print                        # blank line, end of headers
-		print "<html>"
-		print "<head>"
-		print "<title>User page!</title>"
-		print "</head>"
-		print "<p>"
-		print "Hi " + user[0]
-		print "Upload videos here. THe system will only accept valid video formats (mp3, mp4, avi, mov, etc)."
-		print '<form enctype="multipart/form-data" id="video" name="video" method="post" action="/cgi-bin/submission.cgi">'
-		print "<label for='file'>Filename:</label>"
-		print "<input type='file' name='file' id = 'file'/>"
-		print "<br />"
-		print "<input type='submit' name='submit' value='Submit' />"
-		print "</form>"
-		print '<form id="logout" name="logout" method="post" action="/cgi-bin/logout.cgi">'
-		print "<input type='submit' name='submit' value='Logout' />"
-		print "<input type='hidden' name = 'username' value =(username) />"
-		print "</form>"
-		print "</p>"
-		print "</html>"
+		print # blank line, end of headers
+		print """      
+		<!doctype html>                  
+		 <html>
+		 	<head>
+		 		<title>User page!</title>
+		 	</head>
+		 <p>
+		 Uploaded videos:</br>
+		 """
+		
+		print """
+		 Hi %s
+		 Upload videos here. The system will only accept valid video formats (mp3, mp4, avi, mov, etc).
+		 	<form enctype=multipart/form-data 
+		 	id=video name=video method=post action=/cgi-bin/submission.cgi>
+		 	<label for='file'>Filename:</label>
+		 	<input type='file' name='file' id = 'file'/>
+		 	<br />
+		 	<input type='submit' name='submit' value='Submit' />
+		 </form>
+		 <form id=logout name=logout method=post action=/cgi-bin/logout.cgi>
+		 <input type='submit' name='submit' value='Logout' />
+		 <input type='hidden' name ='username' value ='username' />
+		 </form>
+		 </p>
+		 </html>
+		""" % user[0]
 	cur.close()
 	conn.close()
-except:
-	msg = ""
+except Exception, e:
+	globals.printerror(msg)

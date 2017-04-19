@@ -24,7 +24,7 @@ CREATE TABLE video_metadata (
     	Framerate           real CHECK(Framerate > 0),
 	frame_num_total		int CHECK(frame_num_total > 0),
 	resolution			point,
-	video_name			char NOT NULL,
-	encoding			char NOT NULL,
+	video_name			varchar[100] NOT NULL,
+	encoding			varchar[100] NOT NULL,
 	PRIMARY KEY (Video_id) 
 );
