@@ -62,5 +62,5 @@ else:
 		conn.commit()
 		cur.close()
 		conn.close()
-	except Exception, e:
+	except Exception as e:
 		globals.printerror(str(e))

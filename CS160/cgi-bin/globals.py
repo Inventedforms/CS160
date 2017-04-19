@@ -5,14 +5,14 @@
 credentials = "dbname='cs160' user='postgres' host='localhost' password = 'student'"
 
 def printerror(msg):
-	print "Content-Type: text/html\r\n\r\n"    # HTML is following   
-	print                        # blank line, end of headers
-	print "<html>"
-	print "<head>"
-	print "<title>Error</title>"
-	print "</head>"
-	print "<p>Something went wrong.</p>"
-	print "<p>"
-	print msg
-	print "</p>"
-	print "</html>"	
+	print ("Content-Type: text/html\r\n\r\n")    # HTML is following   
+	print  ()                      # blank line, end of headers
+	print ("""<html>
+			<head>
+				<title>Error</title>
+			</head>
+	<p>Something went wrong.</p>
+	<p>
+	%s
+	</p>
+	</html>""" % msg)

@@ -1,7 +1,6 @@
-#!/usr/bin/python
-#globals.py
+#!/usr/bin/env python
 # Import modules for CGI handling
-import cgi, cgitb, os, psycopg2, bcrypt, datetime, ipaddress
+import cgi, cgitb, os, psycopg2, bcrypt
 import globals
 from uuid import getnode as get_mac
 
@@ -37,7 +36,6 @@ else:
 				"""
 				c.execute(clear, [username])
 				c.execute(session, [username,ip, str(mac)])
-				#c.execute("INSERT INTO user_login (Login_date) VALUES (now()) WHERE Username=%s ", [username])
 				print "Location:userpage.cgi\r\n"
 			else:
 				msg = "Authentication failure"
@@ -45,5 +43,5 @@ else:
 		c.close()
 		conn.close()
 	except Exception, e:
-		globals.printerror(str(e))
+		msg = str(e)
 globals.printerror(msg)
