@@ -1,8 +1,8 @@
 #!/usr/bin/python3
-import cgi, cgitb, os, sys
+import cgi, cgitb, os
 import globals
 import psycopg2
-import ffmpegVidtoImg
+import ffmpeg
 from subprocess import getstatusoutput
 from uuid import getnode as get_mac
 cgitb.enable()
@@ -61,7 +61,7 @@ def parse(str):
 	return acc
 
 
-def verify(file):
+def verify(file, owner):
 	info = ffprobe_file(file)
 	#print(info)
 	if info:
@@ -71,10 +71,10 @@ def verify(file):
 		framerate = info[3].split('/')
 		framerate = framerate + [info[1], info[2]]
 		fr = list(map(lambda x: int(x), framerate))
-		data = [fr[0]/fr[1], info[0], fr[2], fr[3] , info[7], info[10]]
+		data = [fr[0]/fr[1], info[0], fr[2], fr[3] , info[7], info[10], owner]
 		cur.execute("""
-		INSERT INTO video_metadata (framerate, frame_num_total, resolution, video_name, encoding)
-		 VALUES (%s, %s,point(%s, %s),%s,%s)
+		INSERT INTO video_metadata (framerate, frame_num_total, resolution, video_name, encoding, owner)
+		 VALUES (%s, %s,point(%s, %s), %s, %s,%s)
 		""", data)
 		info = [True] + info
 		conn.commit()
@@ -82,7 +82,7 @@ def verify(file):
 	return info
 
 #Todo: Also, consider what happens with multiple videos of the same name.
-#Returns a tuple of status, video folder, and video file paths
+#Returns [status, video location, video folder]
 def save_uploaded_file (form_field, upload_dir, username):
 	"""This saves a file uploaded by an HTML form.
 	   The form_field is the name of the file input field from the form.
@@ -99,6 +99,7 @@ def save_uploaded_file (form_field, upload_dir, username):
 	if not fileitem.file: 
 		return [False,"invalid file"]
 	fn = os.path.basename(fileitem.filename)
+
 	if not os.path.isdir(upload_dir + username):
 		os.mkdir(upload_dir + username)
 	path = upload_dir + username + '/' + fn.split('.')[0]
@@ -112,7 +113,6 @@ def save_uploaded_file (form_field, upload_dir, username):
 	return [True, upload_dir + username + '/' + fn, path]
 
 
-## Test if the file was uploaded
 def header():
 	print ("Content-Type: text/html\r\n\r\n")    # TML is following   
 	print ()                       # blank line, end of headers
@@ -130,11 +130,16 @@ try:
 		res = save_uploaded_file("file", "/var/www/html/temp/", user)
 		print()
 		#print(res)
-		verif = verify(res[1])
+		verif = verify(res[1], user)
 		#print(verif)
 		if res[0] and verif:
-#			print(ffmpegVidtoImg.ffmpeg_VidtoImg(res[2] ,res[1]))
+			ffmpeg.split(res[1] ,res[2])
+			#Call other shit
+			#ffmppeg.unsplit()
 			print ("File successfully uploaded.")
+			
+			globals.redirect(True)
+
 		else:
 			print ("File is invalid, for some reason.")
 			remove_file(res[1], res[2])

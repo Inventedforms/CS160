@@ -1,8 +1,24 @@
-#!/usr/bin/python
-import os, cgi, cgitb, psycopg2
-def remove_video(video_name):
+#!/usr/bin/python3.5
+import os, cgi, cgitb, psycopg2, globals
+from subprocess import getstatusoutput
+#Nuke a video and the folder it created.
+#We'll have to add to this later to more thoroughly remove stuff.
+def remove_file(filename, filepath):
+	cmd = "rm "  + filename
+	getstatusoutput([cmd])
+	cmd = "rm -r " + filepath
+	getstatusoutput([cmd])
 
-	cmd = "rm " + filename
-	return getstatusoutput([cmd])
-form = cgi.fieldStorage()
-remove_video()
+form = cgi.FieldStorage()
+user = form.getvalue("username")
+upload_dir = "/var/www/html/temp/"
+vid = upload_dir + form.getvalue("videoname")
+fp = upload_dir + form.getvalue("videoname").split('.')[0]
+remove_file(vid, fp)
+
+conn = psycopg2.connect(globals.credentials)
+cur = conn.cursor()
+cur.execute("DELETE FROM video_metadata WHERE Owner = (%s) AND video_name = (%s)", [user, vid])
+conn.commit()
+conn.close()
+print("Location:userpage.cgi\r\n")

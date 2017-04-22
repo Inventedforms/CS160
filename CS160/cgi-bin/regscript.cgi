@@ -18,7 +18,7 @@ elif ("p1" in form) != ("p2" in form):
 	printerror("Make sure you enter your password twice!")
 else:	
 	try:
-		conn = psycopg2.connect(credentials)
+		conn = psycopg2.connect(globals.credentials)
 		cur = conn.cursor()
 		username = form.getvalue('username')
 		pw = form.getvalue('p1')
