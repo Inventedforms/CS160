@@ -26,5 +26,6 @@ CREATE TABLE video_metadata (
 	resolution			point,
 	video_name			varchar[100] NOT NULL,
 	encoding			varchar[100] NOT NULL,
+	owner				varchar[100] NOT NULL,
 	PRIMARY KEY (Video_id) 
 );

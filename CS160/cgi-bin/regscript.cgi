@@ -13,9 +13,9 @@ crappy_passwords = {'password', '12345', '123456' ,'qwerty' ,'12345678', 'letmei
 message = ""
 
 if "username" not in form or "p1" not in form:
-	printerror("Please pick a username and password.")
+	globals.printerror("Please pick a username and password.")
 elif ("p1" in form) != ("p2" in form):
-	printerror("Make sure you enter your password twice!")
+	globals.printerror("Make sure you enter your password twice!")
 else:	
 	try:
 		conn = psycopg2.connect(globals.credentials)
@@ -26,11 +26,11 @@ else:
 		usernametaken = "SELECT * FROM user_profile WHERE username=(%s)"
 		cur.execute(usernametaken, [str(username)])
 		if cur.fetchone() is not None:
-			printerror("Username already taken.")
-		if pw <> pw2:
-			printerror("Passwords don't match.")
+			globals.printerror("Username already taken.")
+		elif pw <> pw2:
+			globals.printerror("Passwords don't match.")
 		elif pw in crappy_passwords:
-			printerror("Pick a better password.")
+			globals.printerror("Pick a better password.")
 		else:
 			fname = form.getvalue('fname')
 			lname = form.getvalue('lname')
