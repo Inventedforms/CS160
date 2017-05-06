@@ -7,16 +7,16 @@ credentials = "dbname='cs160' user='postgres' host='localhost' password = 'stude
 #Generic error message.
 def printerror(msg):
 	print ("Content-Type: text/html\r\n\r\n")    # HTML is following   
-	print  ()                      # blank line, end of headers
+	print                        # blank line, end of headers
 	print ("""<html>
 			<head>
 				<title>Error</title>
 			</head>
-	<p>Something went wrong.</p>
 	<p>
 	%s
 	</p>
-	</html>""" % msg)
+	</html>
+	""" % msg)
 #Create a redirect button. Toggle standalone if the button needs to be its own html page.
 def redirect(standalone):
 	if not standalone:

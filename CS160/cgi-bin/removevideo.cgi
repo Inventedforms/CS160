@@ -6,6 +6,8 @@ from subprocess import getstatusoutput
 def remove_file(filename, filepath):
 	cmd = "rm "  + filename
 	getstatusoutput([cmd])
+	cmd = "rm " + filepath + "_NEW.avi"
+	getstatusoutput([cmd])
 	cmd = "rm -r " + filepath
 	getstatusoutput([cmd])
 

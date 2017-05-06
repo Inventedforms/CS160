@@ -1,8 +1,9 @@
 #!/usr/bin/python3
-import cgi, cgitb, os
+import cgi, cgitb, os, re
 import globals
 import psycopg2
 import ffmpeg
+import sys
 from subprocess import getstatusoutput
 from uuid import getnode as get_mac
 cgitb.enable()
@@ -95,6 +96,7 @@ def save_uploaded_file (form_field, upload_dir, username):
 	form = cgi.FieldStorage()
 	if not form_field in form:
 		return [False,"no such file found"]
+	#fileitem = re.sub('[<>/]', '', form[form_field])
 	fileitem = form[form_field]
 	if not fileitem.file: 
 		return [False,"invalid file"]
@@ -114,7 +116,7 @@ def save_uploaded_file (form_field, upload_dir, username):
 
 
 def header():
-	print ("Content-Type: text/html\r\n\r\n")    # TML is following   
+	print ("Content-Type: text/html\r\n\r\n")    # HTML is following   
 	print ()                       # blank line, end of headers
 	print ("<html>")
 	print ("<head>")
@@ -125,27 +127,29 @@ def header():
 try:
 	#print (sys.path)
 	user = getusername()
-	if user:
-		header()
-		res = save_uploaded_file("file", "/var/www/html/temp/", user)
-		print()
-		#print(res)
-		verif = verify(res[1], user)
-		#print(verif)
-		if res[0] and verif:
-			ffmpeg.split(res[1] ,res[2])
-			#Call other shit
-			#ffmppeg.unsplit()
-			print ("File successfully uploaded.")
-			
-			globals.redirect(True)
-
-		else:
-			print ("File is invalid, for some reason.")
-			remove_file(res[1], res[2])
-	else:
+	if not user:
 		print("Location:userlogin.cgi")
+
+	#form = cgi.FieldStorage()
+	res = save_uploaded_file("file", "/var/www/html/temp/", user)
+	#print(res)
+	if not res[0]:
+		globals.printerror(res[1])
+		sys.exit()
+	verif = verify(res[1], user)
+	#print(verif)
+	if res[0] and verif:
+		header()
+		ffmpeg.split(res[1] ,res[2])
+		#Call other shit
+		p = ffmpeg.unsplit(res[2], res[2])
+		#print(p)
+		print("File successfully uploaded.")
+		globals.redirect(True)
+	else:
+		globals.printerror("File is invalid, for some reason.")
+		globals.redirect(True)
+		remove_file(res[1], res[2])
 except Exception as  e:
-	print ("shit.")
-	print (str(e))
+	globals.printerror(str(e))
 print ("</html>")

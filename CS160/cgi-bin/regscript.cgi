@@ -1,7 +1,7 @@
 #!/usr/bin/python
 
 # Import modules for CGI handling 
-import cgi, cgitb, psycopg2, bcrypt, os
+import cgi, cgitb, psycopg2, bcrypt, os, re
 import globals
 from uuid import getnode as get_mac
 # Create instance of FieldStorage 
@@ -10,8 +10,7 @@ form = cgi.FieldStorage()
 cgitb.enable()
 crappy_passwords = {'password', '12345', '123456' ,'qwerty' ,'12345678', 'letmein', '54321'}
 #Get data from fields
-message = ""
-
+page = "regscript.cgi"
 if "username" not in form or "p1" not in form:
 	globals.printerror("Please pick a username and password.")
 elif ("p1" in form) != ("p2" in form):
@@ -20,7 +19,7 @@ else:
 	try:
 		conn = psycopg2.connect(globals.credentials)
 		cur = conn.cursor()
-		username = form.getvalue('username')
+		username = re.sub('[<>/]', '', form.getvalue('username'))
 		pw = form.getvalue('p1')
 		pw2 = form.getvalue('p2')
 		usernametaken = "SELECT * FROM user_profile WHERE username=(%s)"
@@ -32,8 +31,8 @@ else:
 		elif pw in crappy_passwords:
 			globals.printerror("Pick a better password.")
 		else:
-			fname = form.getvalue('fname')
-			lname = form.getvalue('lname')
+			fname = re.sub('[<>/]', '', form.getvalue('fname'))
+			lname = re.sub('[<>/]', '', form.getvalue('lname'))
 			if fname is None:
 				fname = ""
 			if lname is None:

@@ -31,8 +31,7 @@ try:
 		 		<title>User page!</title>
 		 	</head>
 		 <p>
-		 Uploaded videos:</br>
-		 Hi %s
+		 Hi %s </br>
 		 Upload videos here. The system will only accept valid video formats (mp3, mp4, avi, mov, etc).
 			<form enctype=multipart/form-data 
 			id=video name=video method=post action=/cgi-bin/submission.cgi>
