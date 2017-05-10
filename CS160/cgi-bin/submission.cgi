@@ -94,25 +94,33 @@ def save_uploaded_file (form_field, upload_dir, username):
 	   this does nothing.
 	"""
 	form = cgi.FieldStorage()
+	#print(form)
 	if not form_field in form:
-		return [False,"no such file found"]
-	#fileitem = re.sub('[<>/]', '', form[form_field])
+		return [False,"No file detected."]
 	fileitem = form[form_field]
 	if not fileitem.file: 
-		return [False,"invalid file"]
-	fn = os.path.basename(fileitem.filename)
-
+		return [False,"Invalid file"]
+	filename = os.path.basename(fileitem.filename)
+	filename = re.sub('[<>/]', '', filename)
+	if filename == "":
+		return [False, "No file detected."]
 	if not os.path.isdir(upload_dir + username):
 		os.mkdir(upload_dir + username)
-	path = upload_dir + username + '/' + fn.split('.')[0]
+	#Handle periods in video names
+	fn = filename.split('.')
+	if(len(fn) > 2):
+		for x in fn[1:-1]:
+			fn[0] = fn[0] + '.' + x
+	path = upload_dir + username + '/' + fn[0]
 	#Todo: Multiple files with the same name and user.
 	#subscript = 1
 	#while os.path.isdir(path):
-	#	path = path + '(' + subscript +  ')'
+#		path = path + '(' + subscript +  ')'
 	if not os.path.isdir(path):
-		os.mkdir(upload_dir + username + '/' + fn.split('.')[0])
-	open(upload_dir + username + '/' + fn, 'wb').write(fileitem.file.read())
-	return [True, upload_dir + username + '/' + fn, path]
+		os.mkdir(path)
+
+	open(upload_dir + username + '/' + filename, 'wb').write(fileitem.file.read())
+	return [True, upload_dir + username + '/' + filename, path]
 
 
 def header():
@@ -134,8 +142,9 @@ try:
 	res = save_uploaded_file("file", "/var/www/html/temp/", user)
 	#print(res)
 	if not res[0]:
-		globals.printerror(res[1])
+		globals.printerror(res[1], "Error")
 		sys.exit()
+	print(res)
 	verif = verify(res[1], user)
 	#print(verif)
 	if res[0] and verif:
@@ -144,12 +153,12 @@ try:
 		#Call other shit
 		p = ffmpeg.unsplit(res[2], res[2])
 		#print(p)
-		print("File successfully uploaded.")
+		print("File successfully uploaded.", "Success")
 		globals.redirect(True)
 	else:
-		globals.printerror("File is invalid, for some reason.")
-		globals.redirect(True)
+		globals.printerror("File is invalid, for some reason.", "Error")
+		#globals.redirect(True)
 		remove_file(res[1], res[2])
 except Exception as  e:
-	globals.printerror(str(e))
+	globals.printerror(str(e), "Error")
 print ("</html>")

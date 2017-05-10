@@ -12,7 +12,7 @@ msg = ""
 if "username" not in form or "password" not in form:
 	msg = "Incomplete information entered."
 else:
-	username = form.getvalue('username')
+	username = form.getvalue('username').strip()
 	password = form.getvalue('password')
 	try:
 		conn = psycopg2.connect(globals.credentials)
@@ -44,4 +44,4 @@ else:
 		conn.close()
 	except Exception, e:
 		msg = str(e)
-globals.printerror(msg)
+globals.printerror(msg, "Error")

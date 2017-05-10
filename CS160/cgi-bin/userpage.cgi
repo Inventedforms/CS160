@@ -31,7 +31,7 @@ try:
 		 		<title>User page!</title>
 		 	</head>
 		 <p>
-		 Hi %s </br>
+		 Hi %s. </br>
 		 Upload videos here. The system will only accept valid video formats (mp3, mp4, avi, mov, etc).
 			<form enctype=multipart/form-data 
 			id=video name=video method=post action=/cgi-bin/submission.cgi>
@@ -65,4 +65,4 @@ try:
 	cur.close()
 	conn.close()
 except Exception, e:
-	globals.printerror(msg)
+	globals.printerror(str(e), "Error")

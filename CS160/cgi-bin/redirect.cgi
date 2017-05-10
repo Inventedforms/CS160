@@ -19,4 +19,4 @@ try:
 	c.close()
 	conn.close()
 except Exception, e:
-	globals.printerror(str(e))
+	globals.printerror(str(e), "Error")

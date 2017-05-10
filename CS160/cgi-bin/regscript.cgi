@@ -8,35 +8,40 @@ from uuid import getnode as get_mac
 form = cgi.FieldStorage() 
 # For debugging
 cgitb.enable()
+err = "Failure"
 crappy_passwords = {'password', '12345', '123456' ,'qwerty' ,'12345678', 'letmein', '54321'}
 #Get data from fields
 page = "regscript.cgi"
 if "username" not in form or "p1" not in form:
-	globals.printerror("Please pick a username and password.")
+	globals.printerror("Please pick a username and password.", err)
 elif ("p1" in form) != ("p2" in form):
-	globals.printerror("Make sure you enter your password twice!")
+	globals.printerror("Make sure you enter your password twice!", err)
 else:	
 	try:
 		conn = psycopg2.connect(globals.credentials)
 		cur = conn.cursor()
-		username = re.sub('[<>/]', '', form.getvalue('username'))
+		username = re.sub('[<>/]', '', form.getvalue('username')).strip()
 		pw = form.getvalue('p1')
 		pw2 = form.getvalue('p2')
 		usernametaken = "SELECT * FROM user_profile WHERE username=(%s)"
 		cur.execute(usernametaken, [str(username)])
 		if cur.fetchone() is not None:
-			globals.printerror("Username already taken.")
+			globals.printerror("Username already taken.", err)
+		elif username.isspace() or pw.isspace():
+			globals.printerror("No white space!", err)
 		elif pw <> pw2:
-			globals.printerror("Passwords don't match.")
+			globals.printerror("Passwords don't match.", err)
 		elif pw in crappy_passwords:
-			globals.printerror("Pick a better password.")
+			globals.printerror("Pick a better password.", err)
 		else:
-			fname = re.sub('[<>/]', '', form.getvalue('fname'))
-			lname = re.sub('[<>/]', '', form.getvalue('lname'))
+			fname = form.getvalue('fname')
+			lname = form.getvalue('lname')
 			if fname is None:
 				fname = ""
 			if lname is None:
 				lname = ""
+			fname = re.sub('[<>/]', '', fname)
+			lname = re.sub('[<>/]', '', lname)
 			message =  "Hello " + fname + " " + lname
 			hashed = bcrypt.hashpw(pw, bcrypt.gensalt())
 			check = """
@@ -62,4 +67,4 @@ else:
 		cur.close()
 		conn.close()
 	except Exception as e:
-		globals.printerror(str(e))
+		globals.printerror(str(e), "Error")
