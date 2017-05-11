@@ -144,7 +144,7 @@ try:
 	if not res[0]:
 		globals.printerror(res[1], "Error")
 		sys.exit()
-	print(res)
+	#print(res)
 	verif = verify(res[1], user)
 	#print(verif)
 	if res[0] and verif:

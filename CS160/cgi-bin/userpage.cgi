@@ -1,11 +1,12 @@
 #!/usr/bin/python
 from uuid import getnode as get_mac
+from os.path import splitext
 import psycopg2, globals
 mac = get_mac()
 
 def show_video(width, height, videoname, username):
 	print "<video width='%s' height='%s' preload controls>" % (width, height)
-	print "<source src='../temp/%s' type='video/mp4'>" % videoname
+	print "<source src='../temp/%s' type='video/mp4'>" % (splitext(videoname)[0] + "_NEW.mp4")
 	print "Your browser does not support the video tag." 
 	print "</video>"
 	print "<form id=delete name=delete method=post action=/cgi-bin/removevideo.cgi>"
@@ -58,7 +59,7 @@ try:
 		else:
 			for data in res:
 				dimensions = data[0][1:-1].split(",")
-				#print dimensions
+				#print data[1]
 				show_video(dimensions[0], dimensions[1],data[1][19:],user)
 		print "</p>"
 		print "</html>"

@@ -6,7 +6,7 @@ from subprocess import getstatusoutput
 def remove_file(filename, filepath):
 	cmd = "rm "  + filename
 	getstatusoutput([cmd])
-	cmd = "rm " + filepath + "_NEW.avi"
+	cmd = "rm " + filepath + "_NEW.mp4"
 	getstatusoutput([cmd])
 	cmd = "rm -r " + filepath
 	getstatusoutput([cmd])
@@ -15,7 +15,8 @@ form = cgi.FieldStorage()
 user = form.getvalue("username")
 upload_dir = "/var/www/html/temp/"
 vid = upload_dir + form.getvalue("videoname")
-fp = upload_dir + form.getvalue("videoname").split('.')[0]
+fp = upload_dir + os.path.split(form.getvalue("videoname"))[0]
+
 remove_file(vid, fp)
 
 conn = psycopg2.connect(globals.credentials)

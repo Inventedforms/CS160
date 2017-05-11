@@ -17,7 +17,7 @@ def split(filename,filepath):
 #unsplit(file, videoname, codec)
 def unsplit(directory, videoname):
     #print ('#####    INIT    #####')
-    cmnd = 'ffmpeg -i ' +directory+'/%d.jpg -vcodec libx264 -vcodec libx264 -vf scale=640:-2,format=yuv420p ' + videoname +'_NEW.avi'
+    cmnd = 'ffmpeg -i ' +directory+'/%d.jpg -vcodec libx264 -vcodec libx264 -vf scale=640:-2,format=yuv420p ' + videoname +'_NEW.mp4'
     #cmnd = 'ffmpeg -i ' +directory+'/%03d.jpg -vcodec '+codec +' sample/test.avi'
     p = getstatusoutput([cmnd])
     return p
